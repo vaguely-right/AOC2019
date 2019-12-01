@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 import os
 os.chdir('AOC2019')
 
@@ -28,6 +29,11 @@ for i in range(1,10,1):
 
 data.sum()
 data.sum().sum() - data.weight.sum()
+
+#%%
+#For the brute force solution, plot the results. Just because I can.
+plt.rcParams["figure.figsize"] = (11,5) 
+data.drop('weight',axis=1).plot.bar(stacked=True,legend=False)
 
 #%%
 #Part 2 again, doing a proper function this time
