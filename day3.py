@@ -49,3 +49,49 @@ cross = list(set(path1).intersection(path2))
 dist = np.min(np.sum(np.abs(cross),axis=1))
 print(dist)
 
+#%%
+#Part 2 example
+path1 = get_path(ex1[0])
+path2 = get_path(ex1[1])
+cross = list(set(path1).intersection(path2))
+dist = np.min(np.sum(np.abs(cross),axis=1))
+steps1 = [path1.index(i) for i in cross]
+steps2 = [path2.index(i) for i in cross]
+steps = np.min(np.add(steps1,steps2)) + 2
+print(steps)
+
+
+path1 = get_path(ex2[0])
+path2 = get_path(ex2[1])
+cross = list(set(path1).intersection(path2))
+dist = np.min(np.sum(np.abs(cross),axis=1))
+steps1 = [path1.index(i) for i in cross]
+steps2 = [path2.index(i) for i in cross]
+steps = np.min(np.add(steps1,steps2)) + 2
+print(steps)
+
+#%%
+#Part 2
+steps1 = [path1.index(i) for i in cross]
+steps2 = [path2.index(i) for i in cross]
+steps = np.min(np.add(steps1,steps2)) + 2
+print(steps)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
