@@ -1,6 +1,8 @@
+import os
+os.chdir('AOC2019')
+
 lower = 246540
 upper = 787419
-
 
 #Part 1
 #Set the count to zero
@@ -16,7 +18,7 @@ for pwd in range(lower,upper):
     for i in range(1,len(txt)):
         if int(txt[i]) >= int(txt[i-1]):
 #Check if there is a run of consecutive digits
-            if int(txt[i]) == int(txt[i-1]):
+            if txt[i] == txt[i-1]:
                 check = True
         else:
             check = False
@@ -25,12 +27,13 @@ for pwd in range(lower,upper):
         part1 += 1
 #Check if there is a run of exactly two digits
         check = False
-        for i in range(1,(len(txt)-1)):
-            if ((int(txt[i-1])==int(txt[i])) or (int(txt[i])==int(txt[i+1]))) and (int(txt[i-1])!=int(txt[i+1])):
+        txt = 'n'+txt+'n'
+        for i in range(1,(len(txt)-2)):
+            if (txt[i] == txt[i+1]) & (txt[i-1] != txt[i]) & (txt[i] != txt[i+2]):
                 check = True
                 break
             else:
-                check = False
+                continue
         if check:
             part2 += 1
     
