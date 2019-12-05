@@ -77,8 +77,13 @@ steps2 = [path2.index(i) for i in cross]
 steps = np.min(np.add(steps1,steps2)) + 2
 print(steps)
 
+#%%
+#Plotting the wire paths, just because
+import matplotlib.pyplot as plt
+plt.rcParams["figure.figsize"] = (12,8) 
 
-
+plt.plot([i[0] for i in path1],[i[1] for i in path1])
+plt.plot([i[0] for i in path2],[i[1] for i in path2])
 
 
 
