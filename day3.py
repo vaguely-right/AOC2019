@@ -84,7 +84,7 @@ plt.rcParams["figure.figsize"] = (12,8)
 
 plt.plot([i[0] for i in path1],[i[1] for i in path1])
 plt.plot([i[0] for i in path2],[i[1] for i in path2])
-
+plt.scatter([i[0] for i in cross],[i[1] for i in cross],c='green',marker='x')
 
 
 
