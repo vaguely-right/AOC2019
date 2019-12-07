@@ -1,9 +1,10 @@
 import numpy as np
 import os
 os.chdir('AOC2019')
+import itertools as it
 
 #%%
-#Part 1
+#The intcode functions
 def intcode(nums,pos,inval):
     opcode = nums[pos] % 100
     outval = 0
@@ -102,80 +103,95 @@ def intcode(nums,pos,inval):
         pars = ['none']
         mode = ['none']
         print('Program exit: error code ',opcode)
-    print('OPCODE ',opcode,'  parameters ',pars,' modes ',mode)
-    return nums,pos,opcode
+    print('OPCODE ',opcode,'  parameters ',pars,' modes ',mode, 'output value ',outval)
+    return nums,pos,opcode,outval
+
+def amplifier(phase,inval,nums):
+    pos = 0
+    opcode = 1
+    i = phase
+    while(opcode<=8):
+        nums,pos,opcode,o = intcode(nums,pos,i)
+        if opcode == 3:
+            i = inval
+        if opcode == 4:
+            outval = o
+    return outval,nums
 
 #%%
-#Test: check the day 2 examples
-day2example = [1,9,10,3,2,3,11,0,99,30,40,50]
-nums = list.copy(day2example)
-opcode = 1
-pos = 0
-inval = 1
-
-while opcode in [1,2,3,4]:
-    nums,pos,opcode = intcode(nums,pos,inval)
-
-#%%
-day2example = [1,1,1,4,99,5,6,0,99]
-nums = list.copy(day2example)
-opcode = 1
-pos = 0
-inval = 1
-
-while opcode in [1,2,3,4]:
-    nums,pos,opcode = intcode(nums,pos,inval)
-
-#%%
-fname = 'day2input.txt'
-nums = np.loadtxt(fname,delimiter=',',dtype=int)
-opcode = 1
-pos = 0
-inval = 1
-
-nums[1] = 12
-nums[2] = 2
-
-while opcode in [1,2,3,4]:
-    nums,pos,opcode = intcode(nums,pos,inval)
-
-print(nums[0])
-#%%
-#Sovling part 1
-fname = 'day5input.txt'
-nums = np.loadtxt(fname,delimiter=',',dtype=int)
-inval = 1
-pos = 0
-opcode = 1
-count = 0
-while (opcode in [1,2,3,4]):
-    count += 1
-    nums,pos,opcode = intcode(nums,pos,inval)
-
-#%%
-#Part 2 examples
+#Testing
 nums = [3,21,1008,21,8,20,1005,20,22,107,8,21,20,1006,20,31,1106,0,36,98,0,0,1002,21,125,20,4,20,1105,1,46,104,999,1105,1,46,1101,1000,1,20,4,20,1105,1,46,98,99]
-inval = 9
-pos = 0
-opcode = 1
-while(opcode<=8):
-    nums,pos,opcode = intcode(nums,pos,inval)
+phase = 9
+signal = 0
+amplifier(phase,signal,nums)
+
 
 #%%
-#Part 2 for real
-fname = 'day5input.txt'
-nums = np.loadtxt(fname,delimiter=',',dtype=int)
-inval = 5
-pos = 0
-opcode = 1
-while(opcode<=8):
-    nums,pos,opcode = intcode(nums,pos,inval)
+#Testing
+day7test = [3,15,3,16,1002,16,10,16,1,16,15,15,4,15,99,0,0]
+phase = [4,3,2,1,0]
+signal = 0
 
+for p in phase:
+    nums = day7test
+    signal = amplifier(p,signal,nums)
+    print(signal)
 
+#%%
+#More testing
+day7test = [3,23,3,24,1002,24,10,24,1002,23,-1,23,101,5,23,23,1,24,23,23,4,23,99,0,0]
+phase = [0,1,2,3,4]
+signal = 0
 
+for p in phase:
+    nums = day7test
+    signal = amplifier(p,signal,nums)
+    print('SIGNAL IS',signal)
 
+#%%
+#One more test
+day7test = [3,31,3,32,1002,32,10,32,1001,31,-2,31,1007,31,0,33,1002,33,7,33,1,33,31,31,1,32,31,31,4,31,99,0,0,0]
+phase = [1,0,4,3,2]
+signal = 0
 
+for p in phase:
+    nums = day7test
+    signal,nums = amplifier(p,signal,nums)
+    print('SIGNAL IS',signal)
 
+#%%
+#For real this time, Part 1
+fname = 'day7input.txt'
+day7input = np.loadtxt(fname,delimiter=',',dtype=int)
+outphase = []
+outsignal = []
+for phase in it.permutations(range(5)):
+    signal = 0
+    for p in phase:
+        nums = day7input
+        signal = amplifier(p,signal,nums)
+    outphase.append(phase)
+    outsignal.append(signal)
+        
+print(np.max(outsignal))
+
+#%%
+#Part 2 example
+day7example = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
+phase = [9,8,7,6,5]
+signal = 0
+outval = 0
+nums = []
+for i in range(5):
+    nums.append(day7example)
+while signal == outval:
+    for p,n in zip(phase,nums):
+        signal,n = amplifier(p,signal,n)
+        print('SIGNAL IS',signal)
+    if signal == outval:
+        break
+    if signal > outval :
+        outval = signal
 
 
 
