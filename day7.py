@@ -235,14 +235,92 @@ while check == True:
         check = False
 print(outval)
 
+#%%
+#Totally rewriting Part 2
+day7example = [3,52,1001,52,-5,52,3,53,1,52,56,54,1007,54,5,55,1005,55,26,1001,54,-5,54,1105,1,12,1,53,54,53,1008,54,0,55,1001,55,1,55,2,53,55,53,4,53,1001,56,-1,56,1005,56,6,99,0,0,0,0,10]
+phase = [[9,0],[7],[8],[5],[6]]
+incount = [0,0,0,0,0]
+pos = [int(i) for i in np.zeros(5)]
+nums = []
+for i in range(5):
+    nums.append(list.copy(day7example))
+#First, run through the first pass
+opcode = 1
+while(opcode!=99):
+    for i in range(5):
+        opcode = 1
+        while (opcode!=4) and (opcode!=99):
+            if incount[i] >= len(phase[i]):
+                nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],0)
+            else:
+                nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],phase[i][incount[i]])                
+            if opcode == 3:
+                incount[i] += 1
+            if opcode == 4:
+                if i == 4:
+                    phase[0].append(outval)
+                else:
+                    phase[i+1].append(outval)
+
+print(np.max(np.max(phase)))
 
 
+#%%
+#Hey, that might have worked! Try another example.
+day7example = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
+phase = [[9,0],[8],[7],[6],[5]]
+incount = [0,0,0,0,0]
+pos = [int(i) for i in np.zeros(5)]
+nums = []
+for i in range(5):
+    nums.append(list.copy(day7example))
+#First, run through the first pass
+opcode = 1
+while(opcode!=99):
+    for i in range(5):
+        opcode = 1
+        while (opcode!=4) and (opcode!=99):
+            if incount[i] >= len(phase[i]):
+                nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],0)
+            else:
+                nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],phase[i][incount[i]])                
+            if opcode == 3:
+                incount[i] += 1
+            if opcode == 4:
+                if i == 4:
+                    phase[0].append(outval)
+                else:
+                    phase[i+1].append(outval)
 
+print(np.max(np.max(phase)))
 
-
-
-
-
-
+#%%
+#Dude, it totally worked! Ok, for real this time.
+outputs = []
+for p in it.permutations(range(5,10)):
+    
+    incount = [0,0,0,0,0]
+    pos = [int(i) for i in np.zeros(5)]
+    nums = []
+    for i in range(5):
+        nums.append(list.copy(day7example))
+    opcode = 1
+    while(opcode!=99):
+        for i in range(5):
+            opcode = 1
+            while (opcode!=4) and (opcode!=99):
+                if incount[i] >= len(phase[i]):
+                    nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],0)
+                else:
+                    nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],phase[i][incount[i]])                
+                if opcode == 3:
+                    incount[i] += 1
+                if opcode == 4:
+                    if i == 4:
+                        phase[0].append(outval)
+                    else:
+                        phase[i+1].append(outval)
+    
+    print(np.max(np.max(phase)))
 
 
