@@ -296,14 +296,18 @@ print(np.max(np.max(phase)))
 
 #%%
 #Dude, it totally worked! Ok, for real this time.
+fname = 'day7input.txt'
+day7input = np.loadtxt(fname,delimiter=',',dtype=int)
+outphase = []
 outputs = []
-for p in it.permutations(range(5,10)):
-    
+#for p in it.permutations(range(5,10)):
+for p in [[9,8,5,6,7]]:
+    phase = [[p[0],0],[p[1]],[p[2]],[p[3]],[p[4]]]
     incount = [0,0,0,0,0]
     pos = [int(i) for i in np.zeros(5)]
     nums = []
     for i in range(5):
-        nums.append(list.copy(day7example))
+        nums.append(list.copy(list(day7input)))
     opcode = 1
     while(opcode!=99):
         for i in range(5):
@@ -315,12 +319,15 @@ for p in it.permutations(range(5,10)):
                     nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],phase[i][incount[i]])                
                 if opcode == 3:
                     incount[i] += 1
-                if opcode == 4:
+                if (opcode == 4) or (opcode == 99):
                     if i == 4:
                         phase[0].append(outval)
                     else:
                         phase[i+1].append(outval)
-    
-    print(np.max(np.max(phase)))
+    outputs.append(np.max(np.max(phase)))
+    outphase.append([i[0] for i in phase])
 
+print('MAX OUTPUT IS ',np.max(outputs),' AT PHASE ',outphase[np.argmax(outputs)])
+
+#Should be 69816958
 
