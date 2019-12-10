@@ -318,31 +318,37 @@ print(np.max(np.max(phase)))
 #%%
 #Hey, that might have worked! Try another example.
 day7example = [3,26,1001,26,-4,26,3,27,1002,27,2,27,1,27,26,27,4,27,1001,28,-1,28,1005,28,6,99,0,0,5]
-phase = [[9,0],[8],[7],[6],[5]]
-incount = [0,0,0,0,0]
-pos = [int(i) for i in np.zeros(5)]
-nums = []
-for i in range(5):
-    nums.append(list.copy(day7example))
-#First, run through the first pass
-opcode = 1
-while(opcode!=99):
+outphase = []
+outputs = []
+for p in it.permutations(range(5,10)):
+    phase = [[p[0],0],[p[1]],[p[2]],[p[3]],[p[4]]] 
+    incount = [0,0,0,0,0]
+    pos = [int(i) for i in np.zeros(5)]
+    nums = []
     for i in range(5):
-        opcode = 1
-        while (opcode!=4) and (opcode!=99):
-            if incount[i] >= len(phase[i]):
-                nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],0)
-            else:
-                nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],phase[i][incount[i]])                
-            if opcode == 3:
-                incount[i] += 1
-            if opcode == 4:
-                if i == 4:
-                    phase[0].append(outval)
+        nums.append(list.copy(day7example))
+    #First, run through the first pass
+    opcode = 1
+    while(opcode!=99):
+        for i in range(5):
+            opcode = 1
+            while (opcode!=4) and (opcode!=99):
+                if incount[i] >= len(phase[i]):
+                    nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],0)
                 else:
-                    phase[i+1].append(outval)
+                    nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],phase[i][incount[i]])                
+                if opcode == 3:
+                    incount[i] += 1
+                if opcode == 4:
+                    if i == 4:
+                        phase[0].append(outval)
+                    else:
+                        phase[i+1].append(outval)
+    outputs.append(np.max(np.max(phase)))
+    outphase.append([i[0] for i in phase])
 
-print(np.max(np.max(phase)))
+print(np.max(outputs),' for phase ',outphase[np.argmax(outputs)])
+print('Should be 139629729')
 
 #%%
 #Dude, it totally worked! Ok, for real this time.
@@ -396,7 +402,7 @@ for p in [[9, 5, 6, 8, 7]]:
     nums = []
     for i in range(5):
         nums.append(list.copy(list(day7input)))
-    #Run through each amplifier twice to start
+    #Run through each amplifier once to start
     for i in range(5):
         for j in range(3):
             opcode = 1
