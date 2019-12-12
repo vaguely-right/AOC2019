@@ -389,14 +389,165 @@ print('MAX OUTPUT IS ',np.max(outputs),' AT PHASE ',outphase[np.argmax(outputs)]
 
 #%%
 #Trying a new solution to  Part 2
+#This is the completed intcode from Day 9 and used in Day 11
+def intcode(nums,pos,inval,base):
+    opcode = nums[pos] % 100
+    outval = 0
+    #0=position mode, 1=immediate mode
+    if opcode == 1:
+        #Addition mode
+        pars = [nums[pos+1],nums[pos+2],nums[pos+3]]
+        mode = [int(nums[pos]/100)%10,int(nums[pos]/1000)%10,int(nums[pos]/10000)%10]
+        if mode[0] == 0:
+            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = nums[base + pars[0]]
+        if mode[1] == 0:
+            pars[1] = nums[pars[1]]
+        if mode[1] == 2:
+            pars[1] = nums[base + pars[1]]
+        if mode[2] == 2:
+            pars[2] = base + pars[2]
+        nums[pars[2]] = pars[0] + pars[1]
+        pos = pos + 4
+    elif opcode == 2:
+        #Multiplication mode
+        pars = [nums[pos+1],nums[pos+2],nums[pos+3]]
+        mode = [int(nums[pos]/100)%10,int(nums[pos]/1000)%10,int(nums[pos]/10000)%10]
+        if mode[0] == 0:
+            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = nums[base + pars[0]]
+        if mode[1] == 0:
+            pars[1] = nums[pars[1]]
+        if mode[1] == 2:
+            pars[1] = nums[base + pars[1]]
+        if mode[2] == 2:
+            pars[2] = base + pars[2]
+        nums[pars[2]] = pars[0] * pars[1]        
+        pos = pos + 4
+    elif opcode == 3:
+        #Write mode
+        pars = [nums[pos+1]]
+        mode = [int(nums[pos]/100)%10]
+#        if mode[0] == 0:
+#            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = base + pars[0]
+        nums[pars[0]] = inval
+        pos = pos + 2
+    elif opcode == 4:
+        #Return mode
+        pars = [nums[pos+1]]
+        mode = [int(nums[pos]/100)%10]
+        if mode[0] == 0:
+            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = nums[base + pars[0]]
+        outval = pars[0]
+#        print('Output value ',outval)
+        pos = pos + 2
+    elif opcode == 5:
+        #Jump-if-true
+        pars = [nums[pos+1],nums[pos+2]]
+        mode = [int(nums[pos]/100)%10,int(nums[pos]/1000)%10]
+        if mode[0] == 0:
+            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = nums[base + pars[0]]
+        if mode[1] == 0:
+            pars[1] = nums[pars[1]]
+        if mode[1] == 2:
+            pars[1] = nums[base + pars[1]]
+        if pars[0] != 0:
+            pos = pars[1]
+        else:
+            pos = pos + 3
+    elif opcode == 6:
+        #Jump-if-false
+        pars = [nums[pos+1],nums[pos+2]]
+        mode = [int(nums[pos]/100)%10,int(nums[pos]/1000)%10] 
+        if mode[0] == 0:
+            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = nums[base + pars[0]]
+        if mode[1] == 0:
+            pars[1] = nums[pars[1]]
+        if mode[1] == 2:
+            pars[1] = nums[base + pars[1]]
+        if pars[0] == 0:
+            pos = pars[1]
+        else:
+            pos = pos + 3
+    elif opcode == 7:
+        #Less than
+        pars = [nums[pos+1],nums[pos+2],nums[pos+3]]
+        mode = [int(nums[pos]/100)%10,int(nums[pos]/1000)%10,int(nums[pos]/10000)%10]
+        if mode[0] == 0:
+            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = nums[base + pars[0]]
+        if mode[1] == 0:
+            pars[1] = nums[pars[1]]
+        if mode[1] == 2:
+            pars[1] = nums[base + pars[1]]
+        if mode[2] == 2:
+            pars[2] = base + pars[2]
+        if pars[0] < pars[1]:
+            nums[pars[2]] = 1
+        else:
+            nums[pars[2]] = 0
+        pos = pos + 4
+    elif opcode == 8:
+        #Equals
+        pars = [nums[pos+1],nums[pos+2],nums[pos+3]]
+        mode = [int(nums[pos]/100)%10,int(nums[pos]/1000)%10,int(nums[pos]/10000)%10]
+        if mode[0] == 0:
+            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = nums[base + pars[0]]
+        if mode[1] == 0:
+            pars[1] = nums[pars[1]]
+        if mode[1] == 2:
+            pars[1] = nums[base + pars[1]]
+        if mode[2] == 2:
+            pars[2] = base + pars[2]
+        if pars[0] == pars[1]:
+            nums[pars[2]] = 1
+        else:
+            nums[pars[2]] = 0
+        pos = pos + 4
+    elif opcode == 9:
+        #Adjust the base
+        pars = [nums[pos+1]]
+        mode = [int(nums[pos]/100)%10]
+        if mode[0] == 0:
+            pars[0] = nums[pars[0]]
+        if mode[0] == 2:
+            pars[0] = nums[base + pars[0]]
+        base = base + pars[0]
+        pos = pos + 2
+    elif opcode == 99:
+        pars = ['none']
+        mode = ['none']
+        pos = pos + 1
+#        print('Program exit code 99')
+    else:
+        pars = ['none']
+        mode = ['none']
+#        print('Program exit: error code ',opcode)
+#    print('OPCODE ',opcode,'  parameters ',pars,' modes ',mode, 'output ',outval,' base ',base)
+    return nums,pos,opcode,outval,base
+
+
 #INCOMPLETE, NOT WORKING
 fname = 'day7input.txt'
 day7input = np.loadtxt(fname,delimiter=',',dtype=int)
 outphase = []
 outputs = []
-#for p in it.permutations(range(5,10)):
-for p in [[9, 5, 6, 8, 7]]:
-    phase = [[p[0],0],[p[1]],[p[2]],[p[3]],[p[4]]]
+base = 0
+for p in it.permutations(range(5,10)):
+#for p in [[9, 5, 6, 8, 7]]:
     incount = [0,0,0,0,0]
     pos = [int(i) for i in np.zeros(5)]
     nums = []
@@ -406,45 +557,26 @@ for p in [[9, 5, 6, 8, 7]]:
     for i in range(5):
         for j in range(3):
             opcode = 1
-            inval = phase[i][0]
-            while not opcode in [3,4]:
-                nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],inval)
-                print('AMPLIFIER ',i,'OPCODE ',opcode,'output value ',outval)
-            if opcode == 3:
-                if j == 0:
-                    inval = phase[i][1]
-                continue
-            if opcode == 4:
-                if i == 4:
-                    phase[0].append(outval)
-                else:
-                    phase[i+1].append(outval)
-    #Run through all of the amplifiers again, looking for code 99
+            inval = p[i]
+            while not opcode in [3]:
+                nums[i],pos[i],opcode,outval,base = intcode(nums[i],pos[i],inval,base)
+#                print('AMPLIFIER ',i,'OPCODE ',opcode,'output value ',outval)
+    #Run through all of the amplifiers again, looking for code 4 or 99
+    inval = 0
+    output = []
     while opcode != 99:
-        for j in range(2,20):
-            for i in range(5):
-                opcode = 1
-                inval = phase[i][j]
-                while not opcode in [4,99]:
-                    nums[i],pos[i],opcode,outval = intcode(nums[i],pos[i],inval)
-                if opcode == 4:
-                    if i == 4:
-                        phase[0].append(outval)
-                    else:
-                        phase[i+1].append(outval)
-                if opcode == 99:
-                    break
-            if opcode == 99:
-                break
-    outputs.append(np.max(np.max(phase)))
-    outphase.append([i[0] for i in phase])
+        for i in range(5):
+            opcode = 1
+            while not opcode in [4,99]:
+                nums[i],pos[i],opcode,outval,base = intcode(nums[i],pos[i],inval,base)
+            if opcode == 4:
+                inval = outval
+                output.append(outval)
+    outputs.append(output)
+    outphase.append([i for i in p])
         
 
-print('MAX OUTPUT IS ',np.max(outputs),' AT PHASE ',outphase[np.argmax(outputs)])
-
-
-
-
+print('MAX OUTPUT IS ',np.max(outputs),' AT PHASE ',outphase[np.argmax(outputs,axis=0)[-1]])
 
 
 
