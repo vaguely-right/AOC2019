@@ -69,6 +69,29 @@ for phase in range(nphases):
 
 print(signal[offset:offset+8])
 
+#%%
+#LOLnope to brute force
+#It's a pattern with period 10000, which is a multiple of 4
+#
+insignal = np.fromiter([i for i in '03036732577212944063491565474664'],dtype=int)
+offset = int('03036732577212944063491565474664'[0:7])%len(insignal)
+pattern = np.array([0,1,0,-1])
+nphases = 100
+fft = np.zeros((len(insignal),len(insignal)))
+for i in range(len(insignal)):
+    fft[i] = np.tile(np.repeat(pattern,i+1),len(insignal)//(len(pattern)*(i+1))+1)[1:len(insignal)+1]
+signal = np.copy(insignal)
+for phase in range(nphases):
+    newsignal = np.zeros(np.shape(signal))
+    for i in range(10000):
+        newsignal += np.matmul(fft,signal)
+    signal = abs(signal)%10
+
+print(np.tile(signal,2)[offset:offset+8])
+#Doesn't work; didn't account for the increasing length of the pattern
+
+#%%
+#
 
 #%%
 #Part 2
