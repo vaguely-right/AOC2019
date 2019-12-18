@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 #%%
 #Intcode computer
@@ -152,93 +151,60 @@ def intcode(nums,pos,inval,base):
 #    print('OPCODE ',opcode,'  parameters ',pars,' modes ',mode, 'output ',outval,' base ',base)
     return nums,pos,opcode,outval,base
 
+
+#%%
+#Example    
+camera = '..#..........\n\
+..#..........\n\
+#######...###\n\
+#.#...#...#.#\n\
+#############\n\
+..#...#...#..\n\
+..#####...^..'
+
+alignment = 0
+camera = camera.split('\n')
+for i in range(1,len(camera)-1):
+    for j in range(1,len(camera[i])-1):
+        if (all(x in ['<','>','^','v','#'] for x in [camera[i][j],camera[i-1][j],camera[i+1][j],camera[i][j-1],camera[i][j+1]])):
+            alignment += i*j
+
+print(alignment)
+
+#Works!
+
 #%%
 #Part 1
-fname = 'day13input.txt'
-nums = list(np.loadtxt(fname,delimiter=',',dtype=np.int64))
-tiles = np.zeros((1000,1000))
-nums = nums + [0]*10000
+fname = 'day17input.txt'
+d17 = list(np.loadtxt(fname,delimiter=',',dtype=np.int64))
+
+camera=''
+nums = d17 + [0]*10000
 pos = 0
 opcode = 1
 base = 0
 inval = 0
-move = np.zeros((3),dtype=int)
-while opcode in [1,2,3,4,5,6,7,8,9]:
-    for i in range(3):
-        opcode = 1
-        while opcode in [1,2,3,5,6,7,8,9]:
-            nums,pos,opcode,outval,base = intcode(nums,pos,inval,base)
-        move[i] = outval
-    print('Tile ',move[0],move[1],' = ',move[2])
-    if any(x<0 for x in move):
-        break    
-    tiles[move[1],move[0]] = move[2]
+while opcode != 99:
+    nums,pos,opcode,outval,base = intcode(nums,pos,inval,base)
+    if opcode == 4:
+        camera += chr(outval)
+    
+alignment = 0
+camera = camera.split('\n')[:-2]
+for i in range(1,len(camera)-1):
+    for j in range(1,len(camera[i])-1):
+        if (all(x in ['<','>','^','v','#'] for x in [camera[i][j],camera[i-1][j],camera[i+1][j],camera[i][j-1],camera[i][j+1]])):
+            alignment += i*j
 
-np.sum(tiles==2)
-plt.imshow(tiles[0:20,0:40],vmin=0,vmax=4)
-
-#%%
-#Part 2
-#First, build the game
-fname = 'day13input.txt'
-nums = list(np.loadtxt(fname,delimiter=',',dtype=np.int64))
-tiles = np.zeros((1000,1000))
-nums = nums + [0]*10000
-nums[0] = 2
-pos = 0
-opcode = 1
-base = 0
-inval = 0
-move = np.zeros((3),dtype=int)
-while opcode in [1,2,3,4,5,6,7,8,9]:
-    for i in range(3):
-        opcode = 1
-        while opcode in [1,2,3,5,6,7,8,9]:
-            nums,pos,opcode,outval,base = intcode(nums,pos,inval,base)
-        move[i] = outval
-    print('Tile ',move[0],move[1],' = ',move[2])
-    if any(x<0 for x in move):
-        break    
-    tiles[move[1],move[0]] = move[2]
-
-np.sum(tiles==2)
-plt.imshow(tiles[0:20,0:40],vmin=0,vmax=4)
+print(alignment)
 
 #%%
-#Part 2, now play the game
-paddle = np.argwhere(tiles==3)[0][1]
-ball = np.argwhere(tiles==4)[0][1]
-#Now play the game
-if ball > paddle:
-    inval = 1
-if ball < paddle:
-    inval = -1
-while opcode in [1,2,4,5,6,7,8,9]:
-    for i in range(3):
-        opcode = 1
-        while opcode in [1,2,3,5,6,7,8,9]:
-            nums,pos,opcode,outval,base = intcode(nums,pos,inval,base)
-        move[i] = outval
-    if (move[0] == -1) and (move[1] == 0):
-        display.append(move[2])
-        print('SCORE ',move[2])
-    else:
-        tiles[move[1],move[0]] = move[2]
-        #Update the paddle location
-        if move[2] == 3:
-            paddle = move[0]
-        #Update the ball location
-        if move[2] == 4:
-            ball = move[0]
-        if ball > paddle:
-            inval = 1
-        if ball < paddle:
-            inval = -1
-    if np.sum(tiles==2) == 0:
-        break
 
 
-plt.imshow(tiles[0:20,0:40],vmin=0,vmax=4)
+
+
+
+
 
 
 
